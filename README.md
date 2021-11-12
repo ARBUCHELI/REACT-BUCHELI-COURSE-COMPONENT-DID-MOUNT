@@ -1,70 +1,41 @@
-# Getting Started with Create React App
+# REACT-LESSONS-INSTRUCTOR-ANDRES-R.-BUCHELI
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Take a look to the live example at:
 
-## Available Scripts
 
-In the project directory, you can run:
+## Usage:
+* Accessing dynamic information with this.state.
+* To make a component have state, give the component a state property. This property should be declared inside of a constructor method.
+* this.state should be equal to an object.
+* Using componentDidMount() to update a component.
+* Use of the setInterval() function using the following syntax:
+```
+setInterval(() => {
+      this.setState({ date: new Date() });
+    }, oneSecond);
+```
 
-### `yarn start`
+## Important:
+Remember, the component lifecycle has three high-level parts:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+* 1. Mounting, when the component is being initialized and put into the DOM for the first time
+* 2. Updating, when the component updates as a result of changed state or changed props
+* 3. Unmounting, when the component is being removed from the DOM
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+It’s certainly not in the unmounting phase—we don’t want to start our interval when the clock disappears from the screen! It’s also probably not useful during the updating phase—we want the interval to start as soon as the clock appears, and we don’t want to wait for an update. It probably makes sense to stick this code somewhere in the mounting phase.
 
-### `yarn test`
+We’ve seen two functions: the render() and the constructor. Can we put this code in either of those places?
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+* render() isn’t a good candidate. For one, it executes during the mounting phase and the updating phase—too often for us. It’s also generally a bad idea to set up any kind of side-effect like this in render(), as it can create subtle bugs in the future.
 
-### `yarn build`
+* constructor() is also not great. It does only execute during the mounting phase, so that’s good, but you should generally avoid side-effects like this in constructors because it violates something called the Single Responsibility Principle. In short, it’s not a constructor’s responsibility to start side-effects. (You can read more about the principle on Wikipedia.)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+If it’s not render() or the constructor, then where? Enter a new lifecycle method, componentDidMount().
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+componentDidMount() is the final method called during the mounting phase. The order is:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+* The constructor
+* render()
+* componentDidMount()
 
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+In other words, it’s called after the component is rendered. This is where we’ll want to start our timer.
